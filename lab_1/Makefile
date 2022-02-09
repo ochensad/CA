@@ -44,10 +44,13 @@ $(OUT_DIR)/%.o: $(UNIT_DIR)/%.c $(INCLUDE_UNIT_FILES) $(INCLUDE_C_FILES)
 func_tests.exe: $(OUT_DIR) $(OBJFILES)
 	$(CC) $(GCOVFLAGS) $(OBJFILES) -o $@
 
-.PHONY : clean func unit flag
+.PHONY : clean func unit flag run
 
 coverage: CFLAGS += $(GCOVFLAGS)
 coverage: func_tests.exe
+
+run: app.exe
+	./$^
 
 func: coverage func_tests.exe 
 	cd $(FUNC_DIR) && ./all_test.sh

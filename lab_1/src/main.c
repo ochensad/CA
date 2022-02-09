@@ -34,6 +34,13 @@ int main(void)
     newton_polynomial newton;
     newton.diff_table.table = NULL;
     newton.x_values = NULL;
+    newton.diff_table.rows = 0;
+
+    hermit_polynomial hermit;
+    hermit.diff_table.table = NULL;
+    hermit.x_values = NULL;
+    hermit.diff_table.rows = 0;
+
     int flag = 1;
     while(flag)
     {
@@ -51,15 +58,39 @@ int main(void)
             {
                 free_table(func_table.table, func_table.rows);
                 free_table(newton.diff_table.table, newton.diff_table.rows);
+                free_table(hermit.diff_table.table, hermit.diff_table.rows);
                 return error_code;
             }
         }
-        if (comand == 0)
+        else if (comand == 2)
+        {
+            error_code = get_hermit_polynomial(&hermit, &func_table);
+            if (error_code)
+            {
+                free_table(func_table.table, func_table.rows);
+                free_table(newton.diff_table.table, newton.diff_table.rows);
+                free_table(hermit.diff_table.table, hermit.diff_table.rows);
+                return error_code;
+            }
+        }
+        else if (comand == 3)
+        {
+            error_code = compare(&func_table);
+            if (error_code)
+            {
+                free_table(func_table.table, func_table.rows);
+                free_table(newton.diff_table.table, newton.diff_table.rows);
+                free_table(hermit.diff_table.table, hermit.diff_table.rows);
+                return error_code;
+            }
+        }
+        else if (comand == 0)
         {
             flag = 0;
         }
     }
     free_table(func_table.table, func_table.rows);
     free_table(newton.diff_table.table, newton.diff_table.rows);
+    free_table(hermit.diff_table.table, hermit.diff_table.rows);
     return OK;
 }

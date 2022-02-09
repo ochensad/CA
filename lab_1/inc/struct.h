@@ -17,4 +17,15 @@ typedef struct
     double y_value;
 }newton_polynomial;
 
+typedef struct
+{
+    table_t diff_table;
+    double *x_values;
+    int polynom_exp;
+    int node_num;
+    double value_to_find;
+    double y_value;
+}hermit_polynomial;
+
+
 #endif
