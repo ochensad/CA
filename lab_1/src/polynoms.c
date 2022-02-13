@@ -211,10 +211,8 @@ void fill_hermit_table(hermit_polynomial *hermit)
                 x = hermit->diff_table.table[i][j + 1];
             else
                 x = (hermit->diff_table.table[i][j] - hermit->diff_table.table[i + 1][j]) / (hermit->x_values[i] - hermit->x_values[i + 1 + j]);
-            printf("%lf ", x);
             hermit->diff_table.table[i][j + 1] = x;
         }
-        printf("|%d|\n", j);
     }
 }
 
@@ -290,9 +288,52 @@ int compare(table_t *table)
     hermit.diff_table.table = NULL;
     hermit.x_values = NULL;
 
-    for(int i = 0; i < 4; i++)
+    double find_num;
+
+    printf("Введите х: ");
+    if (scanf("%lf", &find_num) != 1)
     {
-        
+        printf("Ошибка чтения\n");
+        return ERROR_READING;
+    }
+
+    printf("|%7s|   %10s  |  %10s  |\n", "Степень","Эрмит","Ньютон");
+    printf("-------------------------------\n");
+    int error_code;
+    for(int i = 2; i < 6; i++)
+    {
+        printf("|%7d|", i);
+        hermit.node_num = i - 1;
+        hermit.polynom_exp = i;
+        hermit.value_to_find = find_num;
+
+        int i_find = find_index_in_table(hermit.value_to_find, table);
+
+        error_code = find_value_to_hermit_table(&hermit, table, i_find);
+        if (error_code)
+            return error_code;
+
+        fill_hermit_table(&hermit);
+        count_hermit_polynomial(&hermit);
+        printf("%10.6lf", hermit.y_value);
+        free_table(hermit.diff_table.table, hermit.diff_table.rows);
+        free(hermit.x_values);
+        printf("|");
+
+        newton.polynom_exp = i;
+        newton.value_to_find = find_num;
+        int i_n_find = find_index_in_table(newton.value_to_find, table);
+
+        error_code = find_value_to_newton_table(&newton, table, i_n_find);
+        if (error_code)
+            return error_code;
+    
+        fill_newton_table(&newton);
+        count_newton_polynomial(&newton);
+        printf("%10.6lf", newton.y_value);
+        printf("|\n");
+        free_table(newton.diff_table.table, newton.diff_table.rows);
+        free(newton.x_values);
     }
     return OK;
 }
