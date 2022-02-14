@@ -337,3 +337,54 @@ int compare(table_t *table)
     }
     return OK;
 }
+
+int func_sqrt(table_t *table)
+{
+    table_t table_sqrt;
+    table_sqrt.table = NULL;
+    table_sqrt.columns = 2;
+    table_sqrt.rows = table->rows;
+
+    int error_code = allocate_table(&table_sqrt);
+    if (error_code)
+        return error_code;
+    
+    for(int i = 0; i < table->rows; i++)
+    {
+        table_sqrt.table[i][0] = table->table[i][1];
+        table_sqrt.table[i][1] = table->table[i][0];
+    }
+    for(int i = 0; i < table_sqrt.rows; i++)
+    {
+        for(int j = 0; j < table_sqrt.rows - i - 1; j++)
+        {
+            if (table_sqrt.table[j][0] > table_sqrt.table[j + 1][0])
+            {
+                double tmp_y = table_sqrt.table[j][0];
+                double tmp_x = table_sqrt.table[j][1];
+                table_sqrt.table[j][0] = table_sqrt.table[j + 1][0];
+                table_sqrt.table[j + 1][0] = tmp_y;
+                table_sqrt.table[j][1] = table_sqrt.table[j + 1][1];
+                table_sqrt.table[j + 1][1] = tmp_x;
+            }
+        }
+    }
+    print_func_table(table_sqrt);
+
+    newton_polynomial newton;
+    newton.diff_table.table = NULL;
+    newton.polynom_exp = 4;
+    newton.value_to_find = 0;
+    int i_n_find = find_index_in_table(newton.value_to_find, &table_sqrt);
+
+    error_code = find_value_to_newton_table(&newton, &table_sqrt, i_n_find);
+    if (error_code)
+        return error_code;
+    
+    fill_newton_table(&newton);
+    count_newton_polynomial(&newton);
+    printf("Корень функции : %10.6lf\n", newton.y_value);
+    free_table(newton.diff_table.table, newton.diff_table.rows);
+    free(newton.x_values);
+    return OK;
+}

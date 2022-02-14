@@ -84,6 +84,12 @@ int main(void)
                 return error_code;
             }
         }
+        else if (comand == 4)
+        {
+            error_code = func_sqrt(&func_table);
+            if (error_code)
+                return error_code;
+        }
         else if (comand == 0)
         {
             flag = 0;
