@@ -1,5 +1,6 @@
 #include "table.h"
 #include "errors.h"
+#include "struct.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -28,7 +29,7 @@ int allocate_table(table_t *table)
     return OK;
 }
 
-int read_file(char *filename, table_t *table)
+int read_file(char *filename, table_arr_t *table)
 {
     FILE *f;
     f = fopen(filename, "r");
@@ -48,27 +49,52 @@ int read_file(char *filename, table_t *table)
         printf("Ошибка недопустимый размер\n");
         return ERROR_SIZE;
     }
-    table->rows = table_size;
-    int error_code = allocate_table(table);
-    if (error_code)
+    table->table = calloc(table_size, sizeof(table_t));
+    table->size = table_size;
+    for (int i = 0; i < table_size; i++)
     {
-        printf("Ошибка выделения памяти\n");
-        return error_code;
-    }
-    int i = 0;
-    while (i < table_size && fscanf(f, "%lf %lf %lf", &table->table[i][0], &table->table[i][1], &table->table[i][2]) != EOF)
-    {
-        i++;
+        fscanf(f, "%d %d", &table->table[i].rows, &table->table[i].columns);
+        int error_code = allocate_table(&(table->table[i]));
+        if (error_code)
+        {
+            printf("Ошибка выделения памяти\n");
+            return error_code;
+        }
+        for (int j = 0; j < table->table[i].rows; j++)
+        {
+            for (int k = 0; k < table->table[i].columns; k++)
+            {
+                if (fscanf(f,"%lf", &(table->table[i].table[j][k])) == EOF)
+                {
+                    printf("Ошибка чтения");
+                    return ERROR_READING;
+                }
+            }
+        }
     }
     return OK;
 }
 
-void print_func_table(table_t table)
+void print_func_table(table_arr_t* table)
 {
     printf("Полученные из файла данные\n");
-    printf("%6s  %6s  %6s\n", "x", "y", "y'");
-    for(int i = 0; i < table.rows; i++)
-        printf("%lf %lf %lf\n", table.table[i][0], table.table[i][1], table.table[i][2]);
+    
+    for (int i = 0; i < table->size; i++)
+    {
+        printf("При z = %.3lf\n", table->table[i].table[0][0]);
+        for (int j = 0; j < table->table[i].rows; j++)
+        {
+            for(int k = 0; k < table->table[i].columns; k++)
+            {
+                if (k == 0 && j == 0)
+                    printf("%6s", "y/x");
+                else
+                    printf("%6.3lf ", table->table[i].table[j][k]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
     printf("\n\n");
 }
 

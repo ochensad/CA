@@ -27,7 +27,7 @@ int main(void)
         printf("%d", error_code);
         return error_code;
     }
-
+    sort_table(&func_table);
     print_func_table(func_table);
 
     int comand;

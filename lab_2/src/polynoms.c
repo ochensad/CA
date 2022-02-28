@@ -373,7 +373,7 @@ int func_sqrt(table_t *table)
             }
         }
     }
-    print_func_table(table_sqrt);
+    //print_func_table(table_sqrt);
 
     newton_polynomial newton;
     newton.diff_table.table = NULL;
