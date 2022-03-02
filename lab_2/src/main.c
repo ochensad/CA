@@ -29,38 +29,31 @@ int main(void)
     //sort_table(&func_table);
     print_func_table(&func_table);
 
-    int comand;
-    newton_polynomial newton;
-    newton.diff_table.table = NULL;
-    newton.x_values = NULL;
-    newton.diff_table.rows = 0;
-
-    hermit_polynomial hermit;
-    hermit.diff_table.table = NULL;
-    hermit.x_values = NULL;
-    hermit.diff_table.rows = 0;
-
-    int flag = 1;
-    while(flag)
+    n_exp n;
+    printf("Введите степени nx, ny, nz: ");
+    if (scanf("%d %d %d", &n.n_x, &n.n_y, &n.n_z) != 3)
     {
-        error_code = read_comand(&comand);
-        if (error_code)
-        {
-            for (int i = 0; i < func_table.size; i++)
-                free_table(func_table.table[i].table, func_table.table[i].rows);
-            free(func_table.table);
-            return error_code;
-        }
-
-        else if (comand == 0)
-        {
-            flag = 0;
-        }
+        printf("Ошибка чтения\n");
+        for (int i = 0; i < func_table.size; i++)
+            free_table(func_table.table[i].table, func_table.table[i].rows);
+        free(func_table.table);
+        return ERROR_READING;
     }
+    data_t data;
+    printf("\nВведите значения для поиска x, y, z: ");
+    if (scanf("%lf %lf %lf", &data.x_to_find, &data.y_to_find, &data.z_to_find) != 3)
+    {
+        printf("Ошибка чтения\n");
+        for (int i = 0; i < func_table.size; i++)
+            free_table(func_table.table[i].table, func_table.table[i].rows);
+        free(func_table.table);
+        return ERROR_READING;
+    }
+
+    get_points(func_table, data);
+
     for (int i = 0; i < func_table.size; i++)
         free_table(func_table.table[i].table, func_table.table[i].rows);
     free(func_table.table);
-    free_table(newton.diff_table.table, newton.diff_table.rows);
-    free_table(hermit.diff_table.table, hermit.diff_table.rows);
     return OK;
 }

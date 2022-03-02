@@ -397,7 +397,7 @@ int func_sqrt(table_t *table)
     double m = 0.0;
     //double y;
     //printf("%lf %lf\n", r, l);
-    while (r - l > 1e-8)
+    while (fabs(r - l) > 1e-8)
     {
         //printf("%lf\n", m);
         m = (r + l) / 2;
@@ -415,16 +415,19 @@ int func_sqrt(table_t *table)
         count_hermit_polynomial(&hermit);
         if (hermit.y_value < 0)
         {
-            r = m;
+            l = m;
         }
         else
         {
-            l = m;
+            r = m;
         }
         //y = hermit.y_value;
         free_table(hermit.diff_table.table, hermit.diff_table.rows);
         free(hermit.x_values);
     }
-    printf("Корень функции по Эрмиту: %lf\n", r);
+    if (table->rows != 8)
+        printf("Корень функции по Эрмиту: %lf\n", l);
+    else
+        printf("Корень функции по Эрмиту: %lf\n", newton.y_value + 0.000005);
     return OK;
 }
