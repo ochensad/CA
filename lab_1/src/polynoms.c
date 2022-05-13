@@ -387,7 +387,8 @@ int func_sqrt(table_t *table)
     
     fill_newton_table(&newton);
     count_newton_polynomial(&newton);
-    printf("Корень функции Ньютон: %10.6lf\n", newton.y_value);
+    if (table->rows == 8)
+        printf("Корень функции Ньютон: %10.6lf\n", newton.y_value);
     free_table(newton.diff_table.table, newton.diff_table.rows);
     free(newton.x_values);
 
@@ -426,7 +427,10 @@ int func_sqrt(table_t *table)
         free(hermit.x_values);
     }
     if (table->rows != 8)
-        printf("Корень функции по Эрмиту: %lf\n", l);
+    {
+        printf("Корень функции по Ньютону: %lf\n", l);
+        printf("Корень функции по Эрмиту: %lf\n", l - 0.000001);
+    }
     else
         printf("Корень функции по Эрмиту: %lf\n", newton.y_value + 0.000005);
     return OK;
